@@ -4,3 +4,4 @@ deployment:
     - export DEPLOYPATH=/home/ivmjlfeq/public_html/
     - /bin/cp *.php $DEPLOYPATH
     - /bin/cp *.css $DEPLOYPATH
+    - /bin/cp favicon.ico $DEPLOYPATH
