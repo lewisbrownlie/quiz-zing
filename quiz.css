@@ -12,6 +12,11 @@ div {
 	font-weight: bold;
 }
 
+.plain_div {
+	box-sizing: content-box;
+	border-style: none;
+}
+
 /* HEADER */
 
 .header {

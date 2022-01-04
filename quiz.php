@@ -12,8 +12,6 @@ session_start();
 </head>
 <body>
 
-<!-- HEADER -->
-
 <div id="header" class="header">
     <div id="left_corner" class="corner">
     	<div id="left_corner_header" class="corner_header">Question</div>
@@ -30,74 +28,9 @@ session_start();
     </div>
 </div>
 
-<!-- TEAMS (start with two teams of four quizzers for now) -->
+<!-- TEAMS -->
 
-<div id="team_red" class="team_50">
-	<div id="team_red_score" class="team_score_red">
-		<div id="team_red_score_top" class="team_score_top">Red Team</div>
-		<div id="team_red_score_bottom" class="team_score_bottom">0</div>
-	</div>
-	<div id="team_red_ind_scores" class="ind_scores">
-		<div id="red1" class="ind_quizzer">
-			<div id="red1_light" class="ind_jump_light"></div>
-			<div id="red1_name" class="ind_name">Red 1</div>
-			<div id="red1_score" class="ind_score">0/0</div>
-		</div>
-		<div id="red2" class="ind_quizzer">
-			<div id="red2_light" class="ind_jump_light"></div>
-			<div id="red2_name" class="ind_name">Red 2</div>
-			<div id="red2_score" class="ind_score">0/0</div>
-		</div>
-		<div id="red3" class="ind_quizzer">
-			<div id="red3_light" class="ind_jump_light"></div>
-			<div id="red3_name" class="ind_name">Red 3</div>
-			<div id="red3_score" class="ind_score">0/0</div>
-		</div>
-		<div id="red4" class="ind_quizzer">
-			<div id="red4_light" class="ind_jump_light"></div>
-			<div id="red4_name" class="ind_name">Red 4</div>
-			<div id="red4_score" class="ind_score">0/0</div>
-		</div>
-		<div id="red1" class="ind_quizzer"></div>
-	</div>
-</div>
-
-<div id="team_yellow"></div>
-
-<div id="team_green" class="team_50">
-	<div id="team_green_score" class="team_score_green">
-		<div id="team_green_score_top" class="team_score_top">Green Team</div>
-		<div id="team_green_score_bottom" class="team_score_bottom">0</div>
-	</div>
-	<div id="team_red_ind_scores" class="ind_scores">
-		<div id="green1" class="ind_quizzer">
-			<div id="green1_light" class="ind_jump_light"></div>
-			<div id="green1_name" class="ind_name">Green 1</div>
-			<div id="green1_score" class="ind_score">0/0</div>
-		</div>
-		<div id="green2" class="ind_quizzer">
-			<div id="green2_light" class="ind_jump_light"></div>
-			<div id="green2_name" class="ind_name">Green 2</div>
-			<div id="green2_score" class="ind_score">0/0</div>
-		</div>
-		<div id="green3" class="ind_quizzer">
-			<div id="green3_light" class="ind_jump_light"></div>
-			<div id="green3_name" class="ind_name">Green 3</div>
-			<div id="green3_score" class="ind_score">0/0</div>
-		</div>
-		<div id="green4" class="ind_quizzer">
-			<div id="green4_light" class="ind_jump_light"></div>
-			<div id="green4_name" class="ind_name">Green 4</div>
-			<div id="green4_score" class="ind_score">0/0</div>
-		</div>
-		<div id="green5" class="ind_quizzer">
-			<div id="green5_light" class="ind_jump_light"></div>
-			<div id="green5_name" class="ind_name">Green 5</div>
-			<div id="green5_score" class="ind_score">0/0</div>
-		</div>
-		<div id="red1" class="ind_quizzer"></div>
-	</div>
-</div>
+<div id="teams_ajax" class="plain_div"></div>
 
 <!-- FOOTER (?) (fill in with buttons?) -->
 
@@ -294,10 +227,125 @@ session_start();
 
 <script>
 
-document.getElementById("lineups_button").addEventListener("click", lineups);
-document.getElementById("lineups_form").onsubmit = handle_lineups;
-document.getElementById("lineups_cancel").addEventListener("click", handle_lineups_cancel);
-var lineups_menu = document.getElementById("lineups_menu");
+/* State variables. They are initialized with default values to start but can be
+changed later. */
+
+// Teams
+var red = 1;
+var yellow = 1;
+var green = 1;
+
+// Team names
+var red_name = "Red Team";
+var yellow_name = "Yellow Team";
+var green_name = "Green Team";
+
+// Is the fifth person used?
+var fifth_person_used = false;
+
+// Position of captains and co-captains
+var red_C = 1;
+var red_CC = 2;
+var yellow_C = 1;
+var yellow_CC = 2;
+var green_C = 1;
+var greenCC = 2;
+
+// Names of each team member (empty string signifies no quizzer in that seat)
+var red_team = ["", "", "", "Red 4", "Red 5"];
+var yellow_team = ["Yellow 1", "Yellow 2", "Yellow 3", "Yellow 4", ""];
+var green_team = ["Green 1", "Green 2", "", "Green 4", "Green 5"];
+
+// Has everything been setup?
+var is_setup = false;
+
+load_quiz();
+
+/*
+ * Creates the quiz based on the state variables.
+ */
+function load_quiz() {
+	var ajax = new XMLHttpRequest();
+	ajax.open("GET", "controller_get_quiz_teams_UI.php?red=" + red + "&yellow=" + yellow + "&green=" + green, true);
+	ajax.send();
+
+	ajax.onreadystatechange= function() {
+		if (ajax.readyState == 4 && ajax.status == 200) {
+			// Team's inner HTML
+			document.getElementById("teams_ajax").innerHTML = JSON.parse(ajax.responseText);
+
+			// Fill in names
+			if (red == 1) {
+				document.getElementById("team_red_score_top").innerHTML = red_name;
+				for (var i = 1; i <= 5; i++) {
+					document.getElementById("red" + i + "_name").innerHTML = red_team[i - 1];
+					if (red_team[i - 1] == "") {
+						document.getElementById("red" + i).style.opacity = 0;
+						// FIXME: remove event listener
+					}
+					else {
+						document.getElementById("red" + i).style.opacity = 1;
+						// FIXME: add event listener
+					}
+				}
+				if (fifth_person_used == false && red_team[4] != "") {
+					document.getElementById("red5_light").style.opacity = 0;
+					// FIXME: remove event listener
+				}
+			}
+			if (yellow == 1) {
+				document.getElementById("team_yellow_score_top").innerHTML = yellow_name;
+				for (var i = 1; i <= 5; i++) {
+					document.getElementById("yellow" + i + "_name").innerHTML = yellow_team[i - 1];
+					if (yellow_team[i - 1] == "") {
+						document.getElementById("yellow" + i).style.opacity = 0;
+						// FIXME: remove event listener
+					}
+					else {
+						document.getElementById("yellow" + i).style.opacity = 1;
+						// FIXME: add event listener
+					}
+				}
+				if (fifth_person_used == false && yellow_team[4] != "") {
+					document.getElementById("yellow5_light").style.opacity = 0;
+					// FIXME: remove event listener
+				}
+			}
+			if (green == 1) {
+				document.getElementById("team_green_score_top").innerHTML = green_name;
+				for (var i = 1; i <= 5; i++) {
+					document.getElementById("green" + i + "_name").innerHTML = green_team[i - 1];
+					if (green_team[i - 1] == "") {
+						document.getElementById("green" + i).style.opacity = 0;
+						// FIXME: remove event listener
+					}
+					else {
+						document.getElementById("green" + i).style.opacity = 1;
+						// FIXME: add event listener
+					}
+				}
+				if (fifth_person_used == false && green_team[4] != "") {
+					document.getElementById("green5_light").style.opacity = 0;
+					// FIXME: remove event listener
+				}
+			}
+
+			// This is here because the first quiz must be loaded before everything else is setup
+			if (is_setup == false) {
+				setup();
+			}
+		}
+	}
+}
+
+function setup() {
+	// Lineups menu setup
+	document.getElementById("lineups_button").addEventListener("click", lineups);
+	document.getElementById("lineups_form").onsubmit = handle_lineups;
+	document.getElementById("lineups_cancel").addEventListener("click", handle_lineups_cancel);
+
+	setup = true;
+}
 
 function lineups() {
 	lineups_menu.style.display = "block";
@@ -308,8 +356,11 @@ function handle_lineups_cancel() {
 	return false;
 }
 
-function handle_lineups() {
-	var form_array = document.forms["lineups_form"];
+/**
+ * Returns true if the checkboxes are checked properly, false otherwise.
+ * Also alerts the user if the checkboxes are not checked properly.
+ */
+function check_checkboxes() {
 	var RC=0; var RCC=0; var YC=0; var YCC=0; var GC=0; var GCC=0;
 	
 	if (document.getElementById("lineup_red1_C").checked) RC++;
@@ -323,27 +374,27 @@ function handle_lineups() {
 	if (document.getElementById("lineup_red4_CC").checked) RCC++;
 	if (document.getElementById("lineup_red5_CC").checked) RCC++;
 
-	if (form_array["lineup_yellow1_C"].checked) YC++;
-	if (form_array["lineup_yellow2_C"].checked) YC++;
-	if (form_array["lineup_yellow3_C"].checked) YC++;
-	if (form_array["lineup_yellow4_C"].checked) YC++;
-	if (form_array["lineup_yellow5_C"].checked) YC++;
-	if (form_array["lineup_yellow1_CC"].checked) YCC++;
-	if (form_array["lineup_yellow2_CC"].checked) YCC++;
-	if (form_array["lineup_yellow3_CC"].checked) YCC++;
-	if (form_array["lineup_yellow4_CC"].checked) YCC++;
-	if (form_array["lineup_yellow5_CC"].checked) YCC++;
+	if (document.getElementById("lineup_yellow1_C").checked) YC++;
+	if (document.getElementById("lineup_yellow2_C").checked) YC++;
+	if (document.getElementById("lineup_yellow3_C").checked) YC++;
+	if (document.getElementById("lineup_yellow4_C").checked) YC++;
+	if (document.getElementById("lineup_yellow5_C").checked) YC++;
+	if (document.getElementById("lineup_yellow1_CC").checked) YCC++;
+	if (document.getElementById("lineup_yellow2_CC").checked) YCC++;
+	if (document.getElementById("lineup_yellow3_CC").checked) YCC++;
+	if (document.getElementById("lineup_yellow4_CC").checked) YCC++;
+	if (document.getElementById("lineup_yellow5_CC").checked) YCC++;
 
-	if (form_array["lineup_green1_C"].checked) GC++;
-	if (form_array["lineup_green2_C"].checked) GC++;
-	if (form_array["lineup_green3_C"].checked) GC++;
-	if (form_array["lineup_green4_C"].checked) GC++;
-	if (form_array["lineup_green5_C"].checked) GC++;
-	if (form_array["lineup_green1_CC"].checked) GCC++;
-	if (form_array["lineup_green2_CC"].checked) GCC++;
-	if (form_array["lineup_green3_CC"].checked) GCC++;
-	if (form_array["lineup_green4_CC"].checked) GCC++;
-	if (form_array["lineup_green5_CC"].checked) GCC++;
+	if (document.getElementById("lineup_green1_C").checked) GC++;
+	if (document.getElementById("lineup_green2_C").checked) GC++;
+	if (document.getElementById("lineup_green3_C").checked) GC++;
+	if (document.getElementById("lineup_green4_C").checked) GC++;
+	if (document.getElementById("lineup_green5_C").checked) GC++;
+	if (document.getElementById("lineup_green1_CC").checked) GCC++;
+	if (document.getElementById("lineup_green2_CC").checked) GCC++;
+	if (document.getElementById("lineup_green3_CC").checked) GCC++;
+	if (document.getElementById("lineup_green4_CC").checked) GCC++;
+	if (document.getElementById("lineup_green5_CC").checked) GCC++;
 
 	if (RC !== 1) {alert("Red team must have exactly one captain"); return false;}
 	if (RCC != 1) {alert("Red team must have exactly one co-captain"); return false;}
@@ -351,6 +402,16 @@ function handle_lineups() {
 	if (YCC != 1) {alert("Yellow team must have exactly one co-captain"); return false;}
 	if (GC != 1) {alert("Green team must have exactly one captain"); return false;}
 	if (GCC != 1) {alert("Green team must have exactly one co-captain"); return false;}
+
+	return true;
+}
+
+function handle_lineups() {
+	var form_array = document.forms["lineups_form"];
+
+	if (check_checkboxes() == false) {
+		return false;
+	}
 
 	lineups_menu.style.display = "none";
 	return false;

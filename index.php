@@ -14,7 +14,7 @@ session_start();
 <h2>The quizzing website (under construction)</h2>
 
 <form action='controller.php' method='post'>
-<button name='quizOfficial'>Join Quiz (for officials)</button>
+<button name='quiz'>Join Quiz (for officials)</button>
 </form>
 
 </body>
