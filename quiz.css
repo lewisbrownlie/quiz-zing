@@ -199,5 +199,148 @@ div {
 	float: left;
 	
 	width: 100%;
-	height: 50px;
+	height: 65px;
+	
+	background-color: #D0D0D0;
+}
+
+.button_9_one {
+	float: left;
+	text-align: center;
+	
+	padding: 20px;
+	
+	width: 9%;
+	height: 100%;
+	
+	font-weight: normal;
+	color: black;
+}
+
+.button_9_two {
+	float: left;
+	text-align: center;
+	
+	padding: 10px;
+	
+	width: 9%;
+	height: 100%;
+	
+	font-weight: normal;
+	color: black;
+}
+
+.button_9_three {
+	float: left;
+	text-align: center;
+	
+	padding: 2px;
+	
+	width: 9%;
+	height: 100%;
+	
+	font-weight: normal;
+	color: black;
+}
+
+.button_28_one {
+	float: left;
+	text-align: center;
+	
+	padding: 10px;
+	
+	width: 28%;
+	height: 100%;
+	
+	font-weight: normal;
+	color: black;
+}
+
+/* MENUS (general) */
+
+.master_menu_outline {
+	/* Sets the location of the menus on the screen. Each menu should go in here. */
+	box-sizing: content-box;
+	position: fixed;
+	z-index: 1;
+	
+	padding-left: 25%;
+	padding-top: 0px;
+	
+	border-style: none;
+}
+
+.menu {
+	/* Intended to go inside the master_menu_outline. */
+	display: none;
+	position: fixed;
+	width: 50%;
+	height: 500px;
+	background-color: #D0D0D0;
+	border-width: 5px;
+}
+
+/* SPECIFIC MENU ELEMENTS */
+
+.lineups_labels {
+	float: left;
+	
+	width: 19%;
+	height: 180px;
+	
+	border-style: none;
+}
+
+.lineups_label {
+	width: 100%;
+	height: 30px;
+	padding: 5px;
+	
+	border-style: none;
+	
+	color: black;
+	font-weight: normal;
+}
+
+.lineups_team {
+	float: left;
+	
+	width: 27%;
+	height: 180px;
+	
+	border-style: none;
+}
+
+.lineups_dropdown {
+	float: left;
+	
+	width: 80%;
+	height: 30px;
+	padding: 5px;
+	
+	border-style: none;
+}
+
+.lineups_dropdown_input {
+	/* For the <input> tag itself, not the <div>. */
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.lineups_checkboxes {
+	float: left;
+	
+	width: 20%;
+	height: 30px;
+	padding-top: 5px;
+	
+	border-style: none;
+	
+	color: black;
+	font-weight: normal;
+}
+
+.lineups_checkbox {
+	/* For the <input> tag itself, not the <div>. */
+	float: left;
 }
