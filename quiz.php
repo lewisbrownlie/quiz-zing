@@ -229,7 +229,7 @@ session_start();
 	<option value="Green Team">
 </datalist>
 
-<script src="quiz.js"></script>
+<script src="quiz.js" type="module"></script>
 
 </body>
 </html>

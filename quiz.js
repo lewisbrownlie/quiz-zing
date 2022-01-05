@@ -1,3 +1,5 @@
+import {get_teams_html} from "/quiz-zing/quiz_get_teams_html.js";
+
 /* State variables. They are initialized with default values to start but can be
 changed later. */
 
@@ -41,76 +43,66 @@ load_quiz();
  * Creates the quiz based on the state variables.
  */
 function load_quiz() {
-	var ajax = new XMLHttpRequest();
-	ajax.open("GET", "controller_get_quiz_teams_UI.php?red=" + red + "&yellow=" + yellow + "&green=" + green, true);
-	ajax.send();
-
-	ajax.onreadystatechange= function() {
-		if (ajax.readyState == 4 && ajax.status == 200) {
-			// Team's inner HTML
-			document.getElementById("teams_ajax").innerHTML = JSON.parse(ajax.responseText);
-
-			// Fill in names
-			if (red == 1) {
-				document.getElementById("team_red_score_top").innerHTML = red_name;
-				for (var i = 1; i <= 5; i++) {
-					document.getElementById("red" + i + "_name").innerHTML = red_team[i - 1];
-					if (red_team[i - 1] == "") {
-						document.getElementById("red" + i).style.opacity = 0;
-						// FIXME: remove event listener
-					}
-					else {
-						document.getElementById("red" + i).style.opacity = 1;
-						// FIXME: add event listener
-					}
-				}
-				if (fifth_person_used == false && red_team[4] != "") {
-					document.getElementById("red5_light").style.opacity = 0;
-					// FIXME: remove event listener
-				}
+	document.getElementById("teams_ajax").innerHTML = get_teams_html(red, yellow, green);
+	
+	// Fill in names
+	if (red == 1) {
+		document.getElementById("team_red_score_top").innerHTML = red_name;
+		for (var i = 1; i <= 5; i++) {
+			document.getElementById("red" + i + "_name").innerHTML = red_team[i - 1];
+			if (red_team[i - 1] == "") {
+				document.getElementById("red" + i).style.opacity = 0;
+				// FIXME: remove event listener
 			}
-			if (yellow == 1) {
-				document.getElementById("team_yellow_score_top").innerHTML = yellow_name;
-				for (var i = 1; i <= 5; i++) {
-					document.getElementById("yellow" + i + "_name").innerHTML = yellow_team[i - 1];
-					if (yellow_team[i - 1] == "") {
-						document.getElementById("yellow" + i).style.opacity = 0;
-						// FIXME: remove event listener
-					}
-					else {
-						document.getElementById("yellow" + i).style.opacity = 1;
-						// FIXME: add event listener
-					}
-				}
-				if (fifth_person_used == false && yellow_team[4] != "") {
-					document.getElementById("yellow5_light").style.opacity = 0;
-					// FIXME: remove event listener
-				}
-			}
-			if (green == 1) {
-				document.getElementById("team_green_score_top").innerHTML = green_name;
-				for (var i = 1; i <= 5; i++) {
-					document.getElementById("green" + i + "_name").innerHTML = green_team[i - 1];
-					if (green_team[i - 1] == "") {
-						document.getElementById("green" + i).style.opacity = 0;
-						// FIXME: remove event listener
-					}
-					else {
-						document.getElementById("green" + i).style.opacity = 1;
-						// FIXME: add event listener
-					}
-				}
-				if (fifth_person_used == false && green_team[4] != "") {
-					document.getElementById("green5_light").style.opacity = 0;
-					// FIXME: remove event listener
-				}
-			}
-
-			// This is here because the first quiz must be loaded before everything else is setup
-			if (is_setup == false) {
-				setup();
+			else {
+				document.getElementById("red" + i).style.opacity = 1;
+				// FIXME: add event listener
 			}
 		}
+		if (fifth_person_used == false && red_team[4] != "") {
+			document.getElementById("red5_light").style.opacity = 0;
+			// FIXME: remove event listener
+		}
+	}
+	if (yellow == 1) {
+		document.getElementById("team_yellow_score_top").innerHTML = yellow_name;
+		for (var i = 1; i <= 5; i++) {
+			document.getElementById("yellow" + i + "_name").innerHTML = yellow_team[i - 1];
+			if (yellow_team[i - 1] == "") {
+				document.getElementById("yellow" + i).style.opacity = 0;
+				// FIXME: remove event listener
+			}
+			else {
+				document.getElementById("yellow" + i).style.opacity = 1;
+				// FIXME: add event listener
+			}
+		}
+		if (fifth_person_used == false && yellow_team[4] != "") {
+			document.getElementById("yellow5_light").style.opacity = 0;
+			// FIXME: remove event listener
+		}
+	}
+	if (green == 1) {
+		document.getElementById("team_green_score_top").innerHTML = green_name;
+		for (var i = 1; i <= 5; i++) {
+			document.getElementById("green" + i + "_name").innerHTML = green_team[i - 1];
+			if (green_team[i - 1] == "") {
+				document.getElementById("green" + i).style.opacity = 0;
+				// FIXME: remove event listener
+			}
+			else {
+				document.getElementById("green" + i).style.opacity = 1;
+				// FIXME: add event listener
+			}
+		}
+		if (fifth_person_used == false && green_team[4] != "") {
+			document.getElementById("green5_light").style.opacity = 0;
+			// FIXME: remove event listener
+		}
+	}
+	// This is here because the first quiz must be loaded before everything else is setup
+	if (is_setup == false) {
+		setup();
 	}
 }
 
