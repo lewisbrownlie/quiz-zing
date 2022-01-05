@@ -22,12 +22,12 @@ var red_CC = 2;
 var yellow_C = 1;
 var yellow_CC = 2;
 var green_C = 1;
-var greenCC = 2;
+var green_CC = 2;
 
 // Names of each team member (empty string signifies no quizzer in that seat)
 var red_team = ["Red1", "Red2", "Red3", "Red 4", "Red5"];
 var yellow_team = ["Yellow 1", "Yellow 2", "Yellow 3", "Yellow 4", ""];
-var green_team = ["Green 1", "Green 2", "Green4", "Green 4", "Green 5"];
+var green_team = ["Green 1", "Green 2", "Green3", "Green 4", "Green 5"];
 
 // Has everything been setup?
 var is_setup = false;
@@ -310,8 +310,9 @@ function handle_lineups() {
 		yellow_team[i-1] = document.getElementById("lineup_yellow" + i).value;
 		green_team[i-1] = document.getElementById("lineup_green" + i).value;
     }
-
+	
 	lineups_menu.style.display = "none";
 	load_quiz();
+	
 	return false;
 }
