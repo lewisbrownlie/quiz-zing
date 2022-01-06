@@ -1,4 +1,4 @@
-import {get_teams_html} from "/quiz-zing/quiz_get_teams_html.js";
+import {get_teams_html} from "./quiz_get_teams_html.js";
 
 /* State variables. They are initialized with default values to start but can be
 changed later. */
