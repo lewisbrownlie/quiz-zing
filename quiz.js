@@ -110,6 +110,10 @@ function load_quiz() {
 	}
 }
 
+/**
+ * Setup the initial default screen. This should be called ONLY when the page is first loaded
+ * and called within load_quiz() at the very end of the function.
+ */
 function setup() {
 	// Lineups menu setup
 	document.getElementById("lineups_button").addEventListener("click", lineups);
@@ -130,9 +134,12 @@ function setup() {
 }
 
 /**
- * This function should only be used on <input> ekements with datalists attached.
+ * This should be called within setup() for each necessary element:
+ * This function should only be used on <input> elements with datalists attached.
  * It allows the input to have a value, but the user is still able to see the
  * dropdown when they hover over the input.
+ * Additionally, any elements with "teamname" in the id are programmed to call
+ * populate_lineup_dropdowns() on the mouseleave event.
  */
 function set_mouse_action(element_id) {
 	var element = document.getElementById(element_id);
@@ -165,15 +172,25 @@ function set_mouse_action(element_id) {
 	}
 }
 
+/**
+ * This function populates the team quizzers datalist ("lineup_list_(team)")
+ * based on the current value of the passed in element id. If the value of
+ * the element matches a given team, the dropdowns include all used quizzers.
+ * If not, then the dropdown just contains (No Quizzer).
+ */
 function populate_lineup_dropdowns(team_element_id) {
 	var datalist = '<option value="(No Quizzer)">';
 	var element = document.getElementById(team_element_id);
+	
+	// Update if the team exists
 	if (team_map.has(element.value)) {
 		var team = team_map.get(element.value);
 		for (var i = 0; i < team.length; i++) {
 			datalist += '<option value="' + team[i] + '">';
 		}
 	}
+	
+	// Update the correct datalist
 	if (team_element_id.includes("red")) {
 		document.getElementById("lineup_list_red").innerHTML = datalist;
 	}
@@ -185,6 +202,10 @@ function populate_lineup_dropdowns(team_element_id) {
 	}
 }
 
+/**
+ * Sets up the lineups menu by filling in all relevant info and setting the
+ * display type to block (instead of none).
+ */
 function lineups() {
 	// Before diaplaying menu, fill in boxes with relevant info
 	document.getElementById("lineup_red_teamname").value = red_name;
@@ -205,13 +226,16 @@ function lineups() {
 	lineups_menu.style.display = "block";
 }
 
+/**
+ * Handles the event that the "cancel" button is pressed on the lineups menu.
+ */
 function handle_lineups_cancel() {
 	lineups_menu.style.display = "none";
 	return false;
 }
 
 /**
- * Returns true if the checkboxes are checked properly, false otherwise.
+ * Returns true if the lineups checkboxes are checked properly, false otherwise.
  * Also alerts the user if the checkboxes are not checked properly.
  */
 function check_checkboxes() {
@@ -280,6 +304,9 @@ function check_checkboxes() {
 	return true;
 }
 
+/**
+ * Adds the given team to the team map variable.
+ */
 function add_team(team_name) {
 	// Don't need to add the team if it's already added
 	if (team_map.has(team_name) == false) {
@@ -288,8 +315,11 @@ function add_team(team_name) {
 	}
 }
 
+/**
+ * Add the given quizzer to the given team's quizzer list, if the team exists in the team map.
+ */
 function add_quizzer(quizzer_name, team_name) {
-	// Only add the quizzer if the teams exists and the quizzer isn't on the team yet
+	// Only add the quizzer if the team exists and the quizzer isn't on the team yet
 	if (team_map.has(team_name) == true) {
 		var team = team_map.get(team_name);
 		if (team.includes(quizzer_name) == false) {
@@ -300,6 +330,9 @@ function add_quizzer(quizzer_name, team_name) {
 	// event listener (oninput, see set_mouse_events()).
 }
 
+/**
+ * Handles the event that the quizzer presses "OK" on the lineups menu (i.e. submits the form).
+ */
 function handle_lineups() {
 	// Check checkboxes, do nothing if it fails (the function handles alerting the user)
 	if (check_checkboxes() == false) {
