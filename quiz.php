@@ -50,7 +50,7 @@ session_start();
 
 <div id="master_menu_outline" class="master_menu_outline">
 	<div id="lineups_menu" class="menu">
-		<form id="lineups_form">
+		<form id="lineups_form" autocomplete="off">
 			<div id="lineup_labels" class="lineups_labels">
 				<div class="lineups_label">Team Name:</div>
 				<div class="lineups_label">Quizzer 1:</div>
@@ -208,25 +208,24 @@ session_start();
 			</div>
 			<input type="submit" value="OK">
 			<input id = "lineups_cancel" type="button" value="Cancel">
+			<div class="lineups_label">5th person on?</div>
+			<input type="checkbox" id="fifth_person_on">
 		</form>
 	</div>
 </div>
 
 <datalist id="lineup_list_red">
-	<option value="Your Mom">
+	<option value="(No Quizzer)">
 </datalist>
 <datalist id="lineup_list_yellow">
-	<option value="Your Mom">
+	<option value="(No Quizzer)">
 </datalist>
 <datalist id="lineup_list_green">
-	<option value="Your Mom">
+	<option value="(No Quizzer)">
 </datalist>
 
 <datalist id="team_list">
 	<option value="(No Team)">
-	<option value="Red Team">
-	<option value="Yellow Team">
-	<option value="Green Team">
 </datalist>
 
 <script src="quiz.js" type="module"></script>

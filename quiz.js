@@ -25,9 +25,9 @@ var green_C = 1;
 var green_CC = 2;
 
 // Names of each team member (empty string signifies no quizzer in that seat)
-var red_team = ["Red1", "Red2", "Red3", "Red 4", "Red5"];
+var red_team = ["Red 1", "Red 2", "Red 3", "Red 4", "Red 5"];
 var yellow_team = ["Yellow 1", "Yellow 2", "Yellow 3", "Yellow 4", ""];
-var green_team = ["Green 1", "Green 2", "Green3", "Green 4", "Green 5"];
+var green_team = ["Green 1", "Green 2", "Green 3", "Green 4", "Green 5"];
 
 // Has everything been setup?
 var is_setup = false;
@@ -36,6 +36,10 @@ var is_setup = false;
 
 // Map for temporay values
 var temp_map = new Map();
+
+// Maps team names to quizzers on that team
+var team_map = new Map();
+team_map.set("(No Team)", []);
 
 load_quiz();
 
@@ -50,7 +54,7 @@ function load_quiz() {
 		document.getElementById("team_red_score_top").innerHTML = red_name;
 		for (var i = 1; i <= 5; i++) {
 			document.getElementById("red" + i + "_name").innerHTML = red_team[i - 1];
-			if (red_team[i - 1] == "") {
+			if (red_team[i - 1] == ""  || red_team[i - 1] == "(No Quizzer)") {
 				document.getElementById("red" + i).style.opacity = 0;
 				// FIXME: remove event listener
 			}
@@ -148,8 +152,36 @@ function set_mouse_action(element_id) {
 		}
 	}
 	
-	element.oninput = function() {
-		typing = true;
+	if (element_id.includes("teamname")) {
+		element.oninput = function() {
+			typing = true;
+			populate_lineup_dropdowns(element_id);
+		}
+	}
+	else {
+		element.oninput = function() {
+			typing = true;
+		}
+	}
+}
+
+function populate_lineup_dropdowns(team_element_id) {
+	var datalist = '<option value="(No Quizzer)">';
+	var element = document.getElementById(team_element_id);
+	if (team_map.has(element.value)) {
+		var team = team_map.get(element.value);
+		for (var i = 0; i < team.length; i++) {
+			datalist += '<option value="' + team[i] + '">';
+		}
+	}
+	if (team_element_id.includes("red")) {
+		document.getElementById("lineup_list_red").innerHTML = datalist;
+	}
+	else if (team_element_id.includes("yellow")) {
+		document.getElementById("lineup_list_yellow").innerHTML = datalist;
+	}
+	else if (team_element_id.includes("green")) {
+		document.getElementById("lineup_list_green").innerHTML = datalist;
 	}
 }
 
@@ -164,6 +196,10 @@ function lineups() {
 		document.getElementById("lineup_yellow" + i).value = yellow_team[i - 1];
 		document.getElementById("lineup_green" + i).value = green_team[i - 1];
 	}
+	
+	populate_lineup_dropdowns("lineup_red_teamname");
+	populate_lineup_dropdowns("lineup_yellow_teamname");
+	populate_lineup_dropdowns("lineup_green_teamname");
 
 	// Display menu
 	lineups_menu.style.display = "block";
@@ -234,7 +270,34 @@ function check_checkboxes() {
 		if (GCC != 1) {alert("Green team must have exactly one co-captain"); return false;}
 	}
 	
+	if (document.getElementById("fifth_person_on").checked) {
+		fifth_person_used = true;
+	}
+	else {
+		fifth_person_used = false;
+	}
+	
 	return true;
+}
+
+function add_team(team_name) {
+	// Don't need to add the team if it's already added
+	if (team_map.has(team_name) == false) {
+		team_map.set(team_name, []);
+		document.getElementById("team_list").innerHTML += '<option value="' + team_name + '">';
+	}
+}
+
+function add_quizzer(quizzer_name, team_name) {
+	// Only add the quizzer if the teams exists and the quizzer isn't on the team yet
+	if (team_map.has(team_name) == true) {
+		var team = team_map.get(team_name);
+		if (team.includes(quizzer_name) == false) {
+			team.push(quizzer_name);
+		}
+	}
+	// Don't change the HTML of the lineups menu here; that happens in the team name
+	// event listener (oninput, see set_mouse_events()).
 }
 
 function handle_lineups() {
@@ -248,6 +311,9 @@ function handle_lineups() {
     red_name = document.getElementById("lineup_red_teamname").value;
     yellow_name = document.getElementById("lineup_yellow_teamname").value;
     green_name = document.getElementById("lineup_green_teamname").value;
+	add_team(red_name);
+	add_team(yellow_name);
+	add_team(green_name);
 	
 	// Teams
 	if (red_name != "" && red_name != "(No Team)") red = 1;
@@ -307,8 +373,11 @@ function handle_lineups() {
     // Names of each team member
     for (var i = 1; i <= 5; i++) {
 		red_team[i-1] = document.getElementById("lineup_red" + i).value;
+		add_quizzer(red_team[i-1], red_name);
 		yellow_team[i-1] = document.getElementById("lineup_yellow" + i).value;
+		add_quizzer(yellow_team[i-1], yellow_name);
 		green_team[i-1] = document.getElementById("lineup_green" + i).value;
+		add_quizzer(green_team[i-1], green_name);
     }
 	
 	lineups_menu.style.display = "none";
